@@ -10,7 +10,7 @@ end
 
 def coach_answer_enhanced(your_message)
   answer = coach_answer(your_message)
-  if answer != ""
+  if answer != ''
     if your_message.upcase == your_message
       "I can feel your motivation! #{answer}"
     else
