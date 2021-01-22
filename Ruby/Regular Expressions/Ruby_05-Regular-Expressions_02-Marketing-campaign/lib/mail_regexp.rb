@@ -45,27 +45,34 @@ LOCALES = {
   }
 }
 
-def translate(word, language)
+# Translates a sentence:
+# Picks the corresponding translation in LOCALES, given a keyword and a language:
+# 1. Dive into the enclosed Hash correponding to the language (falls back to :en if not found)
+# 2. In that language Hash, retrieve the value corresponding to the keyword
+def translate(keyword, language)
   if LOCALES[language.to_sym].nil?
     translations = LOCALES[:en]
   else
     translations = LOCALES[language.to_sym]
   end
-  return translations[word]
+  return translations[keyword]
 end
 
 def compose_translated_email(email)
   # TODO: return a Hash with username, domain and tld extracted from email
   # TODO: translate subject, body, closing and signature, according to TLD
+
+  # Extract information from the email with capture groups
   match_data = email.match(/^(?<name>\w+)@(?<domain>\w+).(?<tld>\w+)$/)
-  language = match_data[:tld].to_sym
+
+  # Compose the returned hash
   return {
     username: match_data[:name],
     domain: match_data[:domain],
     tld: match_data[:tld],
-    subject: translate(:subject, language),
-    body: translate(:body, language),
-    closing: translate(:closing, language),
-    signature: translate(:signature, language)
+    subject: translate(:subject, match_data[:tld]), # Use the translate method to pick information from LOCALES
+    body: translate(:body, match_data[:tld]),
+    closing: translate(:closing, match_data[:tld]),
+    signature: translate(:signature, match_data[:tld])
   }
 end
